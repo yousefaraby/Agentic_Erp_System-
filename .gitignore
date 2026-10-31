@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment & secrets
+.env
+
+# Generated output
+out/
+out_repaired/
+out_backup_*/
+out_repro_check/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+
+.pytest_cache/
+database/backups/
