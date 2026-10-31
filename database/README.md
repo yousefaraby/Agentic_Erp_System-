@@ -1,9 +1,6 @@
 # PostgreSQL foundation
 
-This directory implements the 31 corrected ERP tables plus three provenance tables.
-The existing generator and source CSVs remain independent. The application
-container uses Python 3.12 and the database uses PostgreSQL 16. Local credentials
-in compose.yml are for isolated development only.
+This repository contains the database foundation only: 31 corrected ERP tables, three provenance tables, migrations, importer, tests, and the corrected synthetic seed snapshot in `database/seed/`. The dataset generator is not included. The application container uses Python 3.12 and the database uses PostgreSQL 16. Local credentials in `compose.yml` are for isolated development only.
 
 ## Run with Docker
 
@@ -17,9 +14,8 @@ docker compose -f database/compose.yml run --rm app python -m database.import_da
 docker compose -f database/compose.yml run --rm app python -m pytest database/tests -v
 ```
 
-The separate database is exposed on localhost:55432. Source CSVs are mounted
-read-only at /data. The named volume is independent of the old generator's
-PostgreSQL volume. Re-run the import command to exercise its no-op behavior.
+The database is exposed on localhost:55432. Corrected seed CSVs are mounted
+read-only at /data. The named volume is dedicated to this database foundation. Re-run the import command to exercise its no-op behavior.
 `docker compose -f database/compose.yml down` stops containers and preserves data.
 Do not add `-v` unless intentionally deleting the database.
 
@@ -29,9 +25,9 @@ Do not add `-v` unless intentionally deleting the database.
 python3.12 -m venv .venv-db
 .\.venv-db\Scripts\python.exe -m pip install -r database/requirements.txt
 $env:ERP_DATABASE_URL = 'postgresql+psycopg://erp:local-development-only@localhost:55432/erp_foundation'
-$env:ERP_DATA_DIR = 'out_repaired'
+$env:ERP_DATA_DIR = 'database/seed'
 .\.venv-db\Scripts\alembic.exe -c database/alembic.ini upgrade head
-.\.venv-db\Scripts\python.exe -m database.import_data out_repaired
+.\.venv-db\Scripts\python.exe -m database.import_data database/seed
 .\.venv-db\Scripts\python.exe -m pytest database/tests -v
 ```
 
@@ -69,7 +65,8 @@ a composite foreign key. Stock balances and reservations remain projections
 that are reconciled against transaction rows. Exact money uses NUMERIC and dates
 use DATE/TIMESTAMPTZ. The migrated inventory-position view exposes available stock.
 
-The importer reads and verifies each CSV against its manifest, checks headers
+The importer reads the checked-in seed snapshot in seed/ (or a compatible
+external directory) and verifies each CSV against its manifest, checks headers
 and counts, and holds a transaction-level advisory lock. All COPY operations,
 provenance inserts and reconciliation run in one transaction. A failure rolls
 back the entire import. The same manifest is a no-op after reconciliation;
@@ -88,7 +85,7 @@ users/authentication enforcement, agents, accounting journals or payroll data.
 ## Schema reference
 
 Read the frozen migration for exact columns, types, defaults, keys, constraints,
-indexes and the view. `../docs/DATA_DICTIONARY.md` describes the source entities.
+indexes and the view. `DATA_DICTIONARY.md` describes the source entities.
 Provenance has `import_batches(batch_id UUID PK, dataset_hash TEXT UNIQUE,
 source_path TEXT, manifest JSONB, imported_at TIMESTAMPTZ)` and
 `import_files(batch_id FK, table_name TEXT, sha256 TEXT, row_count BIGINT)` with

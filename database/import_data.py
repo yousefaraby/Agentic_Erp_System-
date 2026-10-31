@@ -75,4 +75,4 @@ def import_dataset(directory):
         validate(conn)
     print(f"Imported {len(tables)} tables atomically; batch={batch_id}")
 
-if __name__ == "__main__": import_dataset(sys.argv[1] if len(sys.argv)>1 else "out_repaired")
+if __name__ == "__main__": import_dataset(sys.argv[1] if len(sys.argv)>1 else str(Path(__file__).resolve().parent / "seed"))

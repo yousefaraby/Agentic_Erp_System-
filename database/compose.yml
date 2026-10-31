@@ -14,11 +14,12 @@ services:
       retries: 20
   app:
     build:
-      context: ..
-      dockerfile: database/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     environment:
       ERP_DATABASE_URL: postgresql+psycopg://erp:local-development-only@db:5432/erp_foundation
-    volumes: ["../out_repaired:/data:ro"]
+      ERP_DATA_DIR: /data
+    volumes: ["./seed:/data:ro"]
     depends_on:
       db: {condition: service_healthy}
 volumes:
