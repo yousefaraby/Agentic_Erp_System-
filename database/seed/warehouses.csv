@@ -1,4 +1,0 @@
-warehouse_id,warehouse_code,name,warehouse_type,branch_id,address_line,city,region,country,capacity_units,is_active,created_at,updated_at
-1,WH-CENTRAL,Central Distribution Center,central,1,479 Tina Junctions,Springfield,Central Region,United States,146512,True,2023-12-31 23:59:59.999999+00:00,2023-12-31 23:59:59.999999+00:00
-2,WH-R01,Riverton Regional Warehouse,regional,,2439 Ramirez Rapids,Riverton,North Region,United States,59943,True,2023-12-31 23:59:59.999999+00:00,2023-12-31 23:59:59.999999+00:00
-3,WH-R02,Lakeside Regional Warehouse,regional,,1393 Orozco Viaduct Apt. 064,Lakeside,East Region,United States,56138,True,2023-12-31 23:59:59.999999+00:00,2023-12-31 23:59:59.999999+00:00
